@@ -1,0 +1,207 @@
+/* ============ Login Page Styles ============ */
+
+.loginContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============ Animated Blobs ============ */
+
+.blob1,
+.blob2,
+.blob3 {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.15;
+  filter: blur(50px);
+}
+
+.blob1 {
+  width: 300px;
+  height: 300px;
+  background: #667eea;
+  top: -50px;
+  left: -100px;
+  animation: floatBlob1 15s infinite ease-in-out;
+}
+
+.blob2 {
+  width: 250px;
+  height: 250px;
+  background: #764ba2;
+  bottom: -80px;
+  right: -50px;
+  animation: floatBlob2 20s infinite ease-in-out;
+}
+
+.blob3 {
+  width: 200px;
+  height: 200px;
+  background: #667eea;
+  top: 50%;
+  right: 10%;
+  animation: floatBlob3 18s infinite ease-in-out;
+}
+
+@keyframes floatBlob1 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(30px, -30px);
+  }
+}
+
+@keyframes floatBlob2 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-40px, 40px);
+  }
+}
+
+@keyframes floatBlob3 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(20px, -20px);
+  }
+}
+
+/* ============ Card Animations ============ */
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============ Field Animations ============ */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============ Button Animations ============ */
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+  }
+}
+
+/* ============ Loading Spinner ============ */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============ Responsive Design ============ */
+
+@media (max-width: 600px) {
+  .loginContainer {
+    padding: 15px;
+  }
+
+  .blob1,
+  .blob2,
+  .blob3 {
+    opacity: 0.08;
+  }
+
+  .blob1 {
+    width: 200px;
+    height: 200px;
+    top: -70px;
+    left: -70px;
+  }
+
+  .blob2 {
+    width: 180px;
+    height: 180px;
+    bottom: -60px;
+    right: -60px;
+  }
+
+  .blob3 {
+    width: 150px;
+    height: 150px;
+    opacity: 0.05;
+  }
+}
+
+@media (max-width: 400px) {
+  .loginContainer {
+    padding: 10px;
+  }
+
+  .blob1,
+  .blob2,
+  .blob3 {
+    opacity: 0.05;
+  }
+}
