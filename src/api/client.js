@@ -1,7 +1,7 @@
 // src/api/client.js
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8000/api/v1"; // good: backend root for v1
+const API_BASE_URL = "https://assured-farming-frontend.vercel.app/api/v1"; // good: backend root for v1
 
 const api = axios.create({
   baseURL: API_BASE_URL,

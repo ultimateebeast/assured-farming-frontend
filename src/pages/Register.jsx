@@ -66,7 +66,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/accounts/register/",
+        "https://assured-farming-frontend.vercel.app/api/v1/accounts/register/",
         formData,
         {
           headers: {
