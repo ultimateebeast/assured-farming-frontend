@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import api from "../api/client";
 import { useNavigate } from "react-router-dom";
 import styles from "./Register.module.css";
 
@@ -65,15 +66,10 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post(
-        (import.meta.env.VITE_API_URL || "https://assured-farming-backend.onrender.com/api/v1") + "/accounts/register/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      // Use centralized API client to ensure correct baseURL and headers
+      const response = await api.post("/accounts/register/", formData, {
+        headers: { "Content-Type": "application/json" },
+      });
 
       // Store JWT tokens if backend returns them (our RegisterTokenView does)
       if (response.data?.access && response.data?.refresh) {
