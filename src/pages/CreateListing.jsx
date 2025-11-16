@@ -41,8 +41,8 @@ export default function CreateListing() {
   useEffect(() => {
     const fetchCrops = async () => {
       try {
-        const res = await api.get("/marketplace/crops/");
-        setCrops(res.data.results || res.data || []);
+        const res = await listingsAPI.getCrops();
+         setCrops(res.results || res || []);
       } catch (err) {
         console.error("Failed to fetch crops:", err);
         setError("Failed to load crops");
