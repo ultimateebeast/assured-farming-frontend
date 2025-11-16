@@ -27,20 +27,31 @@ import {
 } from "recharts";
 import { TrendingUp, Download, Calendar } from "lucide-react";
 
-const fetchMetric = (url) => api.get(url).then((r) => r.data);
+const fetchMetric = async (url) => {
+  try {
+    const r = await api.get(url);
+    return r.data;
+  } catch (e) {
+    console.error('analytics fetch failed', url, e);
+    return null; // treat as empty
+  }
+};
 
 export default function Analytics() {
   const { data: revenue, isLoading: rLoading } = useQuery({
     queryKey: ["analytics", "farmer-revenue"],
     queryFn: () => fetchMetric("/analytics/farmer-revenue/"),
+    retry: 0,
   });
   const { data: acceptance, isLoading: aLoading } = useQuery({
     queryKey: ["analytics", "acceptance"],
     queryFn: () => fetchMetric("/analytics/acceptance-rate/"),
+    retry: 0,
   });
   const { data: avgDelivery, isLoading: dLoading } = useQuery({
     queryKey: ["analytics", "avg-delivery-time"],
     queryFn: () => fetchMetric("/analytics/avg-delivery-time/"),
+    retry: 0,
   });
 
   const loading = rLoading || aLoading || dLoading;
@@ -85,6 +96,12 @@ export default function Analytics() {
     );
   }
 
+  // Determine if we have any data to show
+  const hasRevenue = Array.isArray(revenueSeries) && revenueSeries.length > 0;
+  const hasAcceptance = (acceptance?.accepted || 0) + (acceptance?.rejected || 0) > 0;
+  const hasDelivery = Array.isArray(avgDeliverySeries) && avgDeliverySeries.length > 0;
+  const hasAny = hasRevenue || hasAcceptance || hasDelivery;
+
   return (
     <Box>
       {/* Header */}
@@ -116,7 +133,9 @@ export default function Analytics() {
           <Button
             startIcon={<Download size={18} />}
             variant="outlined"
-            size="small">
+            size="small"
+            disabled={!hasAny}
+          >
             Export
           </Button>
         </Box>
