@@ -40,12 +40,21 @@ export default function CreateListing() {
   // Fetch available crops
   useEffect(() => {
     const fetchCrops = async () => {
+      const fallbackCrops = [
+        'Wheat','Rice','Maize','Barley','Soybean','Cotton','Sugarcane','Potato','Tomato','Onion','Chickpea','Lentil','Mustard','Pea','Millet (Bajra)','Sorghum (Jowar)','Groundnut','Sunflower','Gram','Tur (Arhar)'
+      ].map((name, idx) => ({ id: `fallback-`, name }));
       try {
         const res = await listingsAPI.getCrops();
-         setCrops(res.results || res || []);
+        const data = res.results || res || [];
+        if (Array.isArray(data) && data.length > 0) {
+          setCrops(data);
+        } else {
+          setCrops(fallbackCrops);
+        }
       } catch (err) {
-        console.error("Failed to fetch crops:", err);
-        setError("Failed to load crops");
+        console.error('Failed to fetch crops:', err);
+        setCrops(fallbackCrops);
+        setError('Using default crop list (server not returning crops yet).');
       } finally {
         setCropsLoading(false);
       }
@@ -79,7 +88,13 @@ export default function CreateListing() {
     try {
       // Build FormData to match backend expectations (supports file uploads later)
       const payload = new FormData();
-      payload.append("crop_id", parseInt(form.crop_id));
+      // If selected crop has a numeric ID (API), send crop_id; otherwise send crop_name for backend to auto-create
+      const selected = crops.find(c => String(c.id) === String(form.crop_id));
+      if (selected && /^[0-9]+$/.test(String(selected.id))) {
+        payload.append('crop_id', parseInt(form.crop_id));
+      } else if (selected) {
+        payload.append('crop_name', selected.name);
+      }
       payload.append("quantity_available", parseFloat(form.quantity_available));
       payload.append("price_floor", parseFloat(form.price_floor));
       payload.append("harvest_date", form.harvest_date);
