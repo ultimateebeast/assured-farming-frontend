@@ -66,7 +66,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        "https://assured-farming-frontend.vercel.app/api/v1/accounts/register/",
+        (import.meta.env.VITE_API_URL || "https://assured-farming-backend.onrender.com/api/v1") + "/accounts/register/",
         formData,
         {
           headers: {
@@ -75,9 +75,11 @@ const Register = () => {
         }
       );
 
-      // Store JWT tokens
-      localStorage.setItem("access_token", response.data.access);
-      localStorage.setItem("refresh_token", response.data.refresh);
+      // Store JWT tokens if backend returns them (our RegisterTokenView does)
+      if (response.data?.access && response.data?.refresh) {
+        localStorage.setItem("access_token", response.data.access);
+        localStorage.setItem("refresh_token", response.data.refresh);
+      }
 
       setSuccess("Registration successful! Redirecting...");
       setTimeout(() => {

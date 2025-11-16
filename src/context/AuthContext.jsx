@@ -40,7 +40,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (data) => {
-    await api.post("/accounts/register/", data);
+    const res = await api.post("/accounts/register/", data);
+    if (res.data?.access && res.data?.refresh) {
+      localStorage.setItem("access_token", res.data.access);
+      localStorage.setItem("refresh_token", res.data.refresh);
+      // Optionally fetch user profile immediately
+      try {
+        const me = await api.get("/accounts/me/");
+        setUser(me.data);
+      } catch (e) {
+        // ignore, user can be loaded later
+      }
+    }
   };
 
   return (
