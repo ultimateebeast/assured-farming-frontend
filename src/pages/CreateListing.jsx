@@ -87,21 +87,23 @@ export default function CreateListing() {
 
     try {
       // Build FormData to match backend expectations (supports file uploads later)
-      const payload = new FormData();
-      // If selected crop has a numeric ID (API), send crop_id; otherwise send crop_name for backend to auto-create
+      // Build JSON payload instead of FormData for simplicity
       const selected = crops.find(c => String(c.id) === String(form.crop_id));
+      const payload = {
+        quantity_available: parseFloat(form.quantity_available),
+        price_floor: parseFloat(form.price_floor),
+        harvest_date: String(form.harvest_date), // must be YYYY-MM-DD
+        quality_grade: form.quality_grade,
+        location: form.location,
+      };
       if (selected && /^[0-9]+$/.test(String(selected.id))) {
-        payload.append('crop_id', parseInt(form.crop_id));
+        payload.crop_id = parseInt(form.crop_id);
       } else if (selected) {
-        payload.append('crop_name', selected.name);
+        payload.crop_name = selected.name;
       }
-      payload.append("quantity_available", parseFloat(form.quantity_available));
-      payload.append("price_floor", parseFloat(form.price_floor));
-      payload.append("harvest_date", form.harvest_date);
-      payload.append("quality_grade", form.quality_grade);
-      payload.append("location", form.location);
 
-      await listingsAPI.createListing(payload);
+      // Use JSON POST for simpler server handling
+      await api.post('/marketplace/listings/', payload);
       alert("Listing created successfully!");
       navigate("/marketplace");
     } catch (err) {
