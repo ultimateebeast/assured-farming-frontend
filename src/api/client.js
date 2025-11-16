@@ -1,7 +1,13 @@
 // src/api/client.js
 import axios from "axios";
 
-const API_BASE_URL = "https://assured-farming-frontend.vercel.app/api/v1"; // good: backend root for v1
+/**
+ * Prefer an env var so you can change between local/dev/prod without touching code.
+ * Set VITE_API_URL in Vercel to: https://assured-farming-backend.onrender.com/api/v1
+ */
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://assured-farming-backend.onrender.com/api/v1";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -11,17 +17,17 @@ const api = axios.create({
   },
 });
 
-// Automatically attach JWT token from localStorage
+// attach access token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");
   if (token) {
+    config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// Handle token expiration (auto-refresh)
-// NOTE: refresh endpoint expects { refresh: "<refresh-token>" }
+// refresh token handling for 401
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -37,26 +43,30 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem("refresh_token");
         if (!refreshToken) throw new Error("No refresh token found");
 
-        const response = await axios.post(
+        // use full URL - axios.post with baseURL won't use the instance defaults
+        const resp = await axios.post(
           `${API_BASE_URL}/accounts/token/refresh/`,
           { refresh: refreshToken },
           { headers: { "Content-Type": "application/json" } }
         );
 
-        const newAccessToken = response.data.access;
+        const newAccessToken = resp.data.access;
+        if (!newAccessToken) throw new Error("No access token returned");
+
         localStorage.setItem("access_token", newAccessToken);
 
         // update headers and retry original request
         api.defaults.headers.Authorization = `Bearer ${newAccessToken}`;
+        originalRequest.headers = originalRequest.headers || {};
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         return api(originalRequest);
       } catch (err) {
-        console.error("Token refresh failed:", err);
+        // clear tokens and route to login
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
-        // redirect to login (or handle with app logic)
         window.location.href = "/login";
+        return Promise.reject(err);
       }
     }
 
