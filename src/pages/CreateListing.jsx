@@ -41,8 +41,27 @@ export default function CreateListing() {
   useEffect(() => {
     const fetchCrops = async () => {
       const fallbackCrops = [
-        'Wheat','Rice','Maize','Barley','Soybean','Cotton','Sugarcane','Potato','Tomato','Onion','Chickpea','Lentil','Mustard','Pea','Millet (Bajra)','Sorghum (Jowar)','Groundnut','Sunflower','Gram','Tur (Arhar)'
-      ].map((name, idx) => ({ id: `fallback-`, name }));
+        "Wheat",
+        "Rice",
+        "Maize",
+        "Barley",
+        "Soybean",
+        "Cotton",
+        "Sugarcane",
+        "Potato",
+        "Tomato",
+        "Onion",
+        "Chickpea",
+        "Lentil",
+        "Mustard",
+        "Pea",
+        "Millet (Bajra)",
+        "Sorghum (Jowar)",
+        "Groundnut",
+        "Sunflower",
+        "Gram",
+        "Tur (Arhar)",
+      ].map((name, idx) => ({ id: `fallback-${idx}`, name }));
       try {
         const res = await listingsAPI.getCrops();
         const data = res.results || res || [];
